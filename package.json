@@ -19,7 +19,8 @@
   },
   "devDependencies": {
     "enlist": "^0.1.0",
-    "jest": "^29.7.0"
+    "jest": "^29.7.0",
+    "noriegaby-md-links": "github:noriegaby/DEV010-md-links"
   },
   "scripts": {
     "test": "jest"
