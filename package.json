@@ -10,6 +10,7 @@
     "commit": "1e61f863787ca573e7e7235dfba9b94c0a4efae3"
   },
   "dependencies": {
+    "commander": "^11.1.0",
     "get-urls": "^12.1.0",
     "markdown-it": "^13.0.2",
     "markdown-to-ast": "^3.2.3",
