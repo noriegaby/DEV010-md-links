@@ -1,4 +1,4 @@
-const mdLinks = require('./mdLinks'); // Importa la función mdLinks desde el archivo mdLinks.js
+const mdLinks = require('./mdLinks');
 const program = require('commander');
 
 program
@@ -6,23 +6,34 @@ program
   .description('Un CLI para buscar links, status, file de un archivo .md en una ruta ingresada');
 
 program
-  .command('buscar <ruta>')
+  .command('buscar <ruta> [validate]')
   .description('Procesa una ruta')
-  .action((ruta) => {
-    console.log('Ruta proporcionada:', ruta);
-   
-  
-const filePath = ruta; // Ruta del archivo Markdown a procesar, la ingresa el usuario (node index.js procesar archivo.md)
+  .action((ruta, validate) => {
+    const filePath = ruta;
+    const validateOption = validate === 'true';
 
-mdLinks(filePath, { validate: true }) // Llama a la función mdLinks con la opción de validación habilitada
-  .then((links) => {
-    console.log('Enlaces encontrados:', links.length); // Imprime la cantidad de enlaces encontrados
-    console.log(links); // Imprime la lista de enlaces, incluyendo información de validación
-  })
-  .catch((error) => {
-    console.error('Error:', error); // Maneja errores e imprime un mensaje de error en la consola
+    console.log('Ruta proporcionada:', filePath);
+    console.log('Opción validate:', validateOption);
+
+    mdLinks(filePath, { validate: validateOption })
+      .then((links) => {
+        const linkData = links.map((link) => {
+          return {
+            href: link.href,
+            text: link.text,
+            file: link.file,
+            status: validateOption ? link.status : 'N/A',
+            ok: validateOption ? `${link.status === 200 ? 'ok' : 'fail'}` : 'N/A',
+          };
+        });
+
+        console.log('Enlaces encontrados:', links.length);
+        console.table(linkData);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
   });
 
-});
 program.parse(process.argv);
-/*  se utiliza para tomar los argumentos de la línea de comandos que están en process.argv y procesarlos de acuerdo a las definiciones previamente establecidas en programa utilizando commander  */
+

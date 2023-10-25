@@ -10,7 +10,9 @@
     "commit": "1e61f863787ca573e7e7235dfba9b94c0a4efae3"
   },
   "dependencies": {
+    "chalk": "^5.3.0",
     "commander": "^11.1.0",
+    "console-table-printer": "^2.11.2",
     "get-urls": "^12.1.0",
     "markdown-it": "^13.0.2",
     "markdown-to-ast": "^3.2.3",
@@ -24,6 +26,6 @@
     "noriegaby-md-links": "github:noriegaby/DEV010-md-links"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest --coverage"
   }
 }
