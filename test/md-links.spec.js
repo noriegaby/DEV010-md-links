@@ -3,14 +3,17 @@ const {
   fileExists,
   isMarkdownFile,
   readFileContent,
-  extractLinksFromMarkdown, 
+  extractLinksFromMarkdown,
   validateLink,
+  listMarkdownFilesInDirectory,
+  unirRutas,
 } = require('../lib/app'); 
 
+const fs = require('fs');
 const path = require('path');
-const fs = require('fs'); 
 
 
+//resolvePath:
 describe('resolvePath', () => {
   it('debería convertir una ruta relativa en una absoluta', () => {
     const relativePath = 'miArchivo.md';
@@ -25,6 +28,7 @@ describe('resolvePath', () => {
   });
 });
 
+//fileExists:
 describe('fileExists', () => {
   it('debería retornar true si el archivo existe', () => {
     const filePath = 'ejemplo.md'; 
@@ -41,6 +45,7 @@ describe('fileExists', () => {
   });
 });
 
+//isMarkdownFile:
 describe('isMarkdownFile', () => {
   it('debería retornar true para un archivo con extensión .md', () => {
     const filePath = 'miArchivo.md';
@@ -57,7 +62,7 @@ describe('isMarkdownFile', () => {
   });
 });
 
-
+//readFileContent:
 describe('readFileContent', () => {
   it('debería resolver con el contenido del archivo', async () => {
     const filePath = 'ejemplo.md'; 
@@ -96,7 +101,7 @@ describe('readFileContent', () => {
   });
 });
 
-
+//extractLinksFromMarkdown:
 describe('extractLinksFromMarkdown', () => {
   it('debería extraer enlaces correctamente de un archivo Markdown', () => {
     const tempFilePath = path.join(__dirname, 'temp.md'); // Ruta del archivo temporal
@@ -149,7 +154,7 @@ describe('extractLinksFromMarkdown', () => {
   });
 });
 
-
+//validateLink:
 describe('validateLink', () => {
   test('debe validar un enlace existente correctamente', () => {
     const link = { text: 'Node.js', href: 'https://nodejs.org/' }; // Enlace de ejemplo
@@ -172,3 +177,65 @@ describe('validateLink', () => {
   });
 });
 
+describe('listMarkdownFilesInDirectory', () => {
+  it('debería listar archivos Markdown en un directorio válido', async () => {
+    const tempDirPath = path.join(__dirname, 'tempDir'); // Ruta del directorio temporal
+
+    // Crea un directorio temporal
+    fs.mkdirSync(tempDirPath);
+
+    // Crea archivos Markdown dentro del directorio temporal
+    const markdownFiles = ['file1.md', 'file2.md', 'file3.txt'];
+    for (const file of markdownFiles) {
+      fs.writeFileSync(path.join(tempDirPath, file), 'Contenido del archivo', 'utf8');
+    }
+
+    // Llama a la función para listar archivos Markdown
+    const result = await listMarkdownFilesInDirectory(tempDirPath);
+
+    // Verifica que la función devuelva una lista de archivos Markdown
+    expect(Array.isArray(result)).toBe(true);
+    expect(result.length).toBe(2); // Debería haber dos archivos Markdown en el directorio
+
+    // Elimina el directorio temporal después de la prueba
+    fs.rmdirSync(tempDirPath, { recursive: true });
+  });
+
+  it('debería listar archivos Markdown en un directorio existente', async () => {
+    const directoryPath = path.join(__dirname, '../docs'); 
+    
+    const markdownFiles = await listMarkdownFilesInDirectory(directoryPath);
+
+    expect(Array.isArray(markdownFiles)).toBe(true);
+    expect(markdownFiles).toHaveLength(5); // Asegúrate de que haya 2 archivos Markdown en el directorio de prueba
+    expect(markdownFiles).toContain ["01-milestone.md", "02-milestone.md", "03-milestone.md", "04-milestone.md", "05-milestone.md"];
+
+  });
+
+  it('debería manejar un directorio sin archivos Markdown', async () => {
+    const directoryPath = __dirname; // Directorio actual que no contiene archivos Markdown
+    const markdownFiles = await listMarkdownFilesInDirectory(directoryPath);
+
+    expect(Array.isArray(markdownFiles)).toBe(true);
+    expect(markdownFiles).toHaveLength(0);
+  });
+});
+
+describe('unirRutas', () => {
+  it('debería unir dos rutas correctamente', () => {
+    const ruta1 = 'ruta1';
+    const ruta2 = 'ruta2';
+    const rutaCompleta = unirRutas(ruta1, ruta2);
+    const expectedPath = 'ruta1\\ruta2';
+
+    expect(rutaCompleta).toBe(expectedPath);
+  });
+
+  it('debería manejar rutas vacías', () => {
+    const ruta1 = '';
+    const ruta2 = 'ruta2';
+    const rutaCompleta = unirRutas(ruta1, ruta2);
+
+    expect(rutaCompleta).toBe('ruta2');
+  });
+});
