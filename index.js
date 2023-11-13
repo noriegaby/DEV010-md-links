@@ -1,6 +1,6 @@
+// Importar módulos y funciones necesarias
 const mdLinks = require('./mdLinks');
-const program = require('commander');
-const fs = require('fs').promises;
+const program = require('commander'); //consola
 const { listMarkdownFilesInDirectory, unirRutas } = require('./lib/app');
 
 // Configuración básica del programa y descripción
@@ -28,7 +28,7 @@ program
             href: link.href,
             text: link.text,
             file: link.file,
-            status: validateOption ? link.status : 'N/A', // Mostrar el estado solo si se selecciona la opción 'validate'
+            status: validateOption ? link.status : 'N/A', // Mostrar el estado solo si se selecciona la opción 'validate' true
             ok: validateOption ? `${link.status === 200 ? 'ok' : 'fail'}` : 'N/A', // Mostrar 'ok' si el estado es 200, 'fail' de lo contrario
           };
         });
@@ -44,10 +44,11 @@ program
 // Comando 'listar-archivos' que lista los archivos .md en un directorio
 program
   .command('listar-archivos <ruta>')
-  .description('Lista los archivos en un directorio')
+  .description('Lista los archivos .md en un directorio')
   .action((ruta) => {
     const directoryPath = ruta;
 
+    // Utilizar la función 'listMarkdownFilesInDirectory' para obtener la lista de archivos Markdown
     listMarkdownFilesInDirectory(directoryPath)
       .then((markdownFiles) => {
         console.log('Archivos Markdown encontrados en el directorio:', markdownFiles.length);
@@ -59,13 +60,15 @@ program
       });
   });
 
-  program
+// Comando 'unir-rutas' que une dos rutas
+program
   .command('unir-rutas <ruta1> <ruta2>')
   .description('Une dos rutas')
   .action((ruta1, ruta2) => {
-    const rutaCompleta = unirRutas(ruta1, ruta2); // Llama a la función unirRutas
+    // Llama a la función 'unirRutas' para combinar dos rutas
+    const rutaCompleta = unirRutas(ruta1, ruta2);
     console.log('Ruta completa:', rutaCompleta);
   });
-// Analizar los argumentos pasados en la línea de comandos
-program.parse(process.argv);
 
+// Analizar los argumentos ingresados en la línea de comandos
+program.parse(process.argv);

@@ -16,14 +16,20 @@ const path = require('path');
 //resolvePath:
 describe('resolvePath', () => {
   it('debería convertir una ruta relativa en una absoluta', () => {
+     // Arrange (Preparar) proporcionar la informacion 
     const relativePath = 'miArchivo.md';
+     // Act (Actuar) usar las funciones
     const absolutePath = resolvePath(relativePath);
+      // Assert (Afirmar) resultado esperado
     expect(path.isAbsolute(absolutePath)).toBe(true);
   });
 
   it('debería mantener una ruta absoluta sin cambios', () => {
+    // Arrange (Preparar) proporcionar la informacion
     const absolutePath = '/ruta/absoluta/miArchivo.md';
+    // Act (Actuar) usar las funciones
     const result = resolvePath(absolutePath);
+    // Assert (Afirmar) resultado esperado
     expect(result).toBe(absolutePath);
   });
 });
@@ -31,16 +37,22 @@ describe('resolvePath', () => {
 //fileExists:
 describe('fileExists', () => {
   it('debería retornar true si el archivo existe', () => {
+     // Arrange (Preparar) proporcionar la informacion
     const filePath = 'ejemplo.md'; 
+     // Act (Actuar) usar las funciones
     const absolutePath = resolvePath(filePath);
     const result = fileExists(absolutePath);
+     // Assert (Afirmar) resultado esperado
     expect(result).toBe(true);
   });
 
   it('debería retornar false si el archivo no existe', () => {
+    // Arrange (Preparar) proporcionar la informacion
     const filePath = 'archivoInexistente.md'; // Asegúrate de que este archivo no exista
+     // Act (Actuar) usar las funciones
     const absolutePath = resolvePath(filePath);
     const result = fileExists(absolutePath);
+    // Assert (Afirmar) resultado esperado
     expect(result).toBe(false);
   });
 });
@@ -48,16 +60,22 @@ describe('fileExists', () => {
 //isMarkdownFile:
 describe('isMarkdownFile', () => {
   it('debería retornar true para un archivo con extensión .md', () => {
+    // Arrange (Preparar) proporcionar la informacion
     const filePath = 'miArchivo.md';
+    // Act (Actuar) usar las funciones
     const absolutePath = resolvePath(filePath);
     const result = isMarkdownFile(absolutePath);
+    // Assert (Afirmar) resultado esperado
     expect(result).toBe(true);
   });
 
   it('debería retornar false para un archivo sin extensión .md', () => {
+     // Arrange (Preparar) proporcionar la informacion
     const filePath = 'miArchivo.txt';
+    // Act (Actuar) usar las funciones
     const absolutePath = resolvePath(filePath);
     const result = isMarkdownFile(absolutePath);
+    // Assert (Afirmar) resultado esperado
     expect(result).toBe(false);
   });
 });
@@ -65,10 +83,11 @@ describe('isMarkdownFile', () => {
 //readFileContent:
 describe('readFileContent', () => {
   it('debería resolver con el contenido del archivo', async () => {
+     // Arrange (Preparar) proporcionar la informacion
     const filePath = 'ejemplo.md'; 
+    // Act (Actuar) usar las funciones
     const absolutePath = resolvePath(filePath);
     const expectedContent = '[Node.js](https://nodejs.org/) Este es el contenido del archivo';
-    
     // Simulamos la lectura de archivos utilizando jest.mock
     jest.mock('fs', () => ({
       promises: {
@@ -80,16 +99,16 @@ describe('readFileContent', () => {
         },
       },
     }));
-    
-
     const content = await readFileContent(absolutePath);
+       // Assert (Afirmar) resultado esperado
     expect(content).toBe(expectedContent);
   });
 
   it('debería rechazar con un error si ocurre un error al leer el archivo', async () => {
-    const filePath = 'archivoInexistente.md'; // Asegúrate de que este archivo no exista
+     // Arrange (Preparar) proporcionar la informacion
+    const filePath = 'archivoInexistente.md'; // Este archivo no existe
+    // Act (Actuar) usar las funciones
     const absolutePath = resolvePath(filePath);
-    
     // Simulamos un error al leer el archivo
     jest.mock('fs', () => ({
       readFile: (callback) => {
@@ -119,6 +138,7 @@ describe('extractLinksFromMarkdown', () => {
     // Llama a la función para extraer enlaces
     const links = extractLinksFromMarkdown(tempFilePath);
 
+     // Assert (Afirmar) resultado esperado
     // Verifica que la función devuelva una lista de enlaces
     expect(Array.isArray(links)).toBe(true);
 
@@ -203,11 +223,10 @@ describe('listMarkdownFilesInDirectory', () => {
 
   it('debería listar archivos Markdown en un directorio existente', async () => {
     const directoryPath = path.join(__dirname, '../docs'); 
-    
     const markdownFiles = await listMarkdownFilesInDirectory(directoryPath);
 
     expect(Array.isArray(markdownFiles)).toBe(true);
-    expect(markdownFiles).toHaveLength(5); // Asegúrate de que haya 2 archivos Markdown en el directorio de prueba
+    expect(markdownFiles).toHaveLength(5); // deben haber 5 archivos Markdown en el directorio de prueba
     expect(markdownFiles).toContain ["01-milestone.md", "02-milestone.md", "03-milestone.md", "04-milestone.md", "05-milestone.md"];
 
   });
@@ -222,20 +241,30 @@ describe('listMarkdownFilesInDirectory', () => {
 });
 
 describe('unirRutas', () => {
+  // Arrange: Preparar los datos necesarios para la prueba
   it('debería unir dos rutas correctamente', () => {
+    // Arrange
     const ruta1 = 'ruta1';
     const ruta2 = 'ruta2';
-    const rutaCompleta = unirRutas(ruta1, ruta2);
-    const expectedPath = 'ruta1\\ruta2';
 
+    // Act: Realizar la acción o llamado a la función que se va a probar
+    const rutaCompleta = unirRutas(ruta1, ruta2);
+    
+    // Assert: Verificar que el resultado obtenido es el esperado
+    const expectedPath = 'ruta1\\ruta2';
     expect(rutaCompleta).toBe(expectedPath);
   });
 
+  // Arrange: Preparar los datos necesarios para la prueba
   it('debería manejar rutas vacías', () => {
+    // Arrange
     const ruta1 = '';
     const ruta2 = 'ruta2';
+
+    // Act: Realizar la acción o llamado a la función que se va a probar
     const rutaCompleta = unirRutas(ruta1, ruta2);
 
+    // Assert: Verificar que el resultado obtenido es el esperado
     expect(rutaCompleta).toBe('ruta2');
   });
 });
